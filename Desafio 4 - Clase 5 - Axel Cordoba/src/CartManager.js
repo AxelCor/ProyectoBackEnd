@@ -1,19 +1,18 @@
 import fs from 'fs';
+import { ProductManager } from "./ProductManager.js";
+const productManager = new ProductManager();
 
-
-export class ProductManager {
+export class CartManager {
     constructor() {
-        this.path = "./productos.json";
-        let contenido = fs.readFileSync(this.path, "utf-8");
-        this.products = JSON.parse(`${contenido}`);
+        this.path = "./carrito.json";
+        this.carts = JSON.parse(fs.readFileSync(this.path, "utf-8"));
     }
     #escribirContenido() {
-        let contenidoStringify = JSON.stringify(this.products);
-        let actualizandoContenido = fs.writeFileSync(this.path, contenidoStringify);
+        let actualizandoContenido = fs.writeFileSync(this.path, JSON.stringify(this.carts));
         return actualizandoContenido;
     }
     getProducts() {
-        let arrayProducts = this.products;
+        let arrayProducts = this.carts;
         if (arrayProducts.length === 0) {
             console.log('Todavía no se ingresaron productos. Array =', arrayProducts)
             return [];
@@ -22,8 +21,8 @@ export class ProductManager {
             return arrayProducts;
         }
     };
-    getProductById(id) {
-        let encontrado = this.products.find((prod) => prod.id === id);
+    getCartById(id) {
+        let encontrado = this.carts.find((c) => c.id === id);
         if (encontrado) {
             console.log(encontrado);
             return encontrado;
@@ -33,7 +32,7 @@ export class ProductManager {
         }
     }
     updateProduct(id, campo, nuevoValor) {
-        let arrayProducts = this.products;
+        let arrayProducts = this.carts;
         this.campo = campo
         let encontrado = arrayProducts.find((prod) => prod.id === id);
         if (encontrado) {
@@ -46,14 +45,14 @@ export class ProductManager {
         }
     }
     deleteProduct(id) {
-        let arrayProducts = this.products;
+        let arrayProducts = this.carts;
         let encontrado = arrayProducts.findIndex((prod) => prod.id == id);
         if (encontrado == -1) {
             console.log('Not Found');
             console.log('Producto no encontrado');
         } else {
             arrayProducts.splice(encontrado, '1');
-            this.products = arrayProducts;
+            this.carts = arrayProducts;
             this.#escribirContenido();
             console.log('Producto eliminado con exito');
 
@@ -61,8 +60,8 @@ export class ProductManager {
     }
     #generarId() {
         let maxId = 0;
-        for (let i = 0; i < this.products.length; i++) {
-            const prod = this.products[i];
+        for (let i = 0; i < this.carts.length; i++) {
+            const prod = this.carts[i];
             if (prod.id > maxId) {
                 maxId = prod.id;
             }
@@ -101,27 +100,32 @@ export class ProductManager {
     }
 
 
-    addProduct(
-        title, description, code, price, stock, category, thumbnails
-    ) {
-
-        let productoNuevo = { title, description, code, price, status: true, stock, category, thumbnails, id: this.#generarId() };
-
-        this.#verificarString("title", productoNuevo);
-        this.#verificarString("description", productoNuevo);
-        this.#verificarNumber("price", productoNuevo);
-        // this.#verificarString("thumbnail", productoNuevo);
-        this.#verificarString("code", productoNuevo);
-        this.#verificarNumber("stock", productoNuevo);
-        this.#verificarString("category", productoNuevo);
-        const codeYaExiste = this.products.find((prod) => prod.code === code);
-        if (codeYaExiste) {
-            console.log('ERROR - código ya existe, escriba otro')
-        }
-        else {
-            this.products = [...this.products, productoNuevo];
-            console.log('Felicidades! Producto nuevo agregado.')
+    addCarrito() {
+        let newCart = {products: [], id: this.#generarId() };
+            this.carts = [...this.carts, newCart];
+            console.log('Felicidades! Carrito nuevo agregado.')
             this.#escribirContenido()
+        
+    }
+    addProduct(cId, pId) {
+        let buscandoCarritoId = this.carts.find((c)=> c.id === cId);
+        if (!buscandoCarritoId) {
+            return new Error("Carrito no existe, ingrese otro ID")
+        }
+        let buscandoProductoId = productManager.products.find((p)=> p.id === pId);
+        if (!buscandoProductoId) {
+            return new Error("Producto no existe, ingrese otro ID")
+        }
+        let productoEnCarrito = buscandoCarritoId.products.find((p)=> p.id === pId);
+        if (!productoEnCarrito) {
+            let newProductoEnCarrito = {id:pId,quantity:1}
+            buscandoCarritoId.products.push(newProductoEnCarrito);
+            this.#escribirContenido()
+            return newProductoEnCarrito;
+        }else{
+            productoEnCarrito.quantity++;
+            this.#escribirContenido()
+            return productoEnCarrito;
         }
     }
 }

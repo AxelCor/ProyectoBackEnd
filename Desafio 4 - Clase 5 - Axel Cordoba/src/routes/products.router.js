@@ -37,7 +37,7 @@ routerProducts.get('/:pId', (req, res) => {
     console.log('Mostrando producto seleccionado por ID.');
     res.send({ product });
 });
-
+//AGREGAR PRODUCTO
 routerProducts.post('/', (req, res) => {
     let newProduct = req.body;
     try {
@@ -47,7 +47,7 @@ routerProducts.post('/', (req, res) => {
         return res.send({ status: "error", data: error.message })
     }
 });
-
+//ACTUALIZAR PRODUCTO
 routerProducts.put('/:pid', (req, res) => {
     let newProduct = req.body;
     try {
@@ -57,7 +57,7 @@ routerProducts.put('/:pid', (req, res) => {
         return res.send({ status: "error", data: error.message })
     }
 });
-
+//BORRAR PRODUCTO
 routerProducts.delete('/:pid', (req, res) => {
     let product = req.body;
     try {
