@@ -32,30 +32,26 @@ export class ProductManager {
             return null;
         }
     }
-    updateProduct(id, campo, nuevoValor) {
-        let arrayProducts = this.products;
-        this.campo = campo
-        let encontrado = arrayProducts.find((prod) => prod.id === id);
-        if (encontrado) {
-            encontrado[campo] = nuevoValor
-            this.#escribirContenido();
-            return console.log('Campo actualizado del producto', encontrado);
-        } else {
+    updateProduct(id, product) {
+        let encontrado = this.products.findIndex((prod) => prod.id == id);
+        if (encontrado === -1) {
             console.log('Not Found');
-            return console.log('Producto no encontrado');
+            return { error: 'Producto no encontrado' };
+        } else {
+            this.products.splice(encontrado, 1, product);
+            this.#escribirContenido();
+            return { success: 'Campos actualizados del producto', data: product };
         }
     }
     deleteProduct(id) {
-        let arrayProducts = this.products;
-        let encontrado = arrayProducts.findIndex((prod) => prod.id == id);
+        let encontrado = this.products.findIndex((prod) => prod.id == id);
         if (encontrado == -1) {
             console.log('Not Found');
-            console.log('Producto no encontrado');
+            return { error: 'Producto no encontrado' };
         } else {
-            arrayProducts.splice(encontrado, '1');
-            this.products = arrayProducts;
+            this.products.splice(encontrado, 1);
             this.#escribirContenido();
-            console.log('Producto eliminado con exito');
+            return {success: 'Producto eliminado con exito'};
 
         }
     }
@@ -101,27 +97,23 @@ export class ProductManager {
     }
 
 
-    addProduct(
-        title, description, code, price, stock, category, thumbnails
-    ) {
-
+    addProduct(product) {
+        const { title, description, code, price, stock, category, thumbnails } = product;
         let productoNuevo = { title, description, code, price, status: true, stock, category, thumbnails, id: this.#generarId() };
-
         this.#verificarString("title", productoNuevo);
         this.#verificarString("description", productoNuevo);
         this.#verificarNumber("price", productoNuevo);
-        // this.#verificarString("thumbnail", productoNuevo);
         this.#verificarString("code", productoNuevo);
         this.#verificarNumber("stock", productoNuevo);
         this.#verificarString("category", productoNuevo);
         const codeYaExiste = this.products.find((prod) => prod.code === code);
         if (codeYaExiste) {
-            console.log('ERROR - código ya existe, escriba otro')
+            return { error: 'ERROR - código ya existe, escriba otro' };
         }
         else {
             this.products = [...this.products, productoNuevo];
-            console.log('Felicidades! Producto nuevo agregado.')
             this.#escribirContenido()
+            return { success: 'Felicidades! Producto nuevo agregado.', product: productoNuevo };
         }
     }
 }

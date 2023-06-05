@@ -49,9 +49,9 @@ routerProducts.post('/', (req, res) => {
 });
 //ACTUALIZAR PRODUCTO
 routerProducts.put('/:pid', (req, res) => {
-    let newProduct = req.body;
+    const pId = parseInt(req.params.pId);
     try {
-        const updateProduct = productManager.updateProduct(newProduct);
+        const updateProduct = productManager.updateProduct(pId);
         return res.send({ updateProduct });
     } catch (error) {
         return res.send({ status: "error", data: error.message })
@@ -59,9 +59,9 @@ routerProducts.put('/:pid', (req, res) => {
 });
 //BORRAR PRODUCTO
 routerProducts.delete('/:pid', (req, res) => {
-    let product = req.body;
+    const pId = parseInt(req.params.pId);
     try {
-        const deleteProduct = productManager.deleteProduct(product);
+        const deleteProduct = productManager.deleteProduct(pId);
         return res.send({ deleteProduct });
     } catch (error) {
         return res.send({ status: "error", data: error.message })
