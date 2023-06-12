@@ -3,7 +3,7 @@ import {connect} from "mongoose";
 export async function connectMongo(){
     try {
         await connect(
-            "mongodb+srv://axeelcordoba:y9X5iIgWclbMKxwS@axel-cluster.jqlgacw.mongodb.net/?retryWrites=true&w=majority"
+            "mongodb+srv://axeelcordoba:***@axel-cluster.jqlgacw.mongodb.net/?retryWrites=true&w=majority"
         );
         console.log("plug to mongo!")
     } catch (error) {
