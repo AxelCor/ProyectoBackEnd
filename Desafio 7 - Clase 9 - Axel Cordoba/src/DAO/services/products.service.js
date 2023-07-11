@@ -1,5 +1,6 @@
 //@ts-check
-import { productModel } from "../models/product.model.js";
+import {productModel} from "../models/product.model.js";
+
 
 
 

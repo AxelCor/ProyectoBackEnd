@@ -8,7 +8,7 @@ export const productModel = model(
         description: { type: String, required: true, max: 100 },
         code: { type: String, required: true, max: 100 },
         price: { type: Number, required: true, max: 100 },
-        status: {status:true},
+        status: {type: Boolean},
         stock: { type: Number, required: true, max: 100 },
         category: { type: String, required: true, max: 100 },
         thumbnail: { type: String, required: true, max: 100 },

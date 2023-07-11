@@ -9,39 +9,49 @@ export const productManager = new ProductManager();
 //Mostrar todos los productos
 routerProducts.get('/', async (req, res) => {
     try {
-
-        const products = await productService.getAllProducts();
-        return res.status(200).json({ result: "succes", msg: "listado de productos", data: products })
-    } catch (e) {
-        console.log(e)
-        return res.status(500).json({
-            status: "error", msg: "something went wrong", data: {}
-        })
-    }
-});
-
-
-//Buscar producto por ID
-routerProducts.get('/:id', async (req, res) => {
-    try {
-        const { id } = parseInt(req.params);
-        const product = await productService.getProductById(id);
+        let { limit, page, query, sort } = req.query;
+        const products = await productService.getProducts(
+            limit,
+            page,
+            query,
+            sort
+        );
         return res.status(200).json({
-            status: "success",
-            msg: "Product found",
-            data: product,
+            status: "Success",
+            msg: "Mostrando todos los productos encontrados con exito",
+            data: products,
         });
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
         return res.status(500).json({
             status: "error",
-            msg: "something went wrong :(",
-            data: {},
+            msg: "something went wrong",
+            data: { error },
         });
     }
 });
+
+
+    //Buscar producto por ID
+    routerProducts.get('/:id', async (req, res) => {
+        try {
+            const { id } = parseInt(req.params);
+            const product = await productService.getProductById(id);
+            return res.status(200).json({
+                status: "success",
+                msg: "Product found",
+                data: product,
+            });
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({
+                status: "error",
+                msg: "something went wrong :(",
+                data: {},
+            });
+        }
+    });
 //AGREGAR PRODUCTO
-routerProducts.post('/', async(req, res) => {
+routerProducts.post('/', async (req, res) => {
     try {
         let newProduct = req.body;
         const productCreated = await productService.createProduct(newProduct);
@@ -61,7 +71,7 @@ routerProducts.post('/', async(req, res) => {
     }
 });
 //ACTUALIZAR PRODUCTO
-routerProducts.put('/:id', async(req, res) => {
+routerProducts.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const updateProduct = req.body;
@@ -81,7 +91,7 @@ routerProducts.put('/:id', async(req, res) => {
     }
 });
 //BORRAR PRODUCTO
-routerProducts.delete('/:pid', async(req, res) => {
+routerProducts.delete('/:pid', async (req, res) => {
     try {
         const { id } = parseInt(req.params);
         const deleted = await productService.deleteProduct(id);
